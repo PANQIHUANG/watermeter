@@ -6,10 +6,14 @@
 
 extern uint8_t received_cmd;
 
-extern uint8_t FLAG_UP0;
-extern uint8_t FLAG_DOWN0;
-extern uint8_t FLAG_UP1;
-extern uint8_t FLAG_DOWN1;
+extern uint8_t FLAG0_UP0;
+extern uint8_t FLAG0_DOWN0;
+extern uint8_t FLAG0_UP1;
+extern uint8_t FLAG0_DOWN1;
+extern uint8_t FLAG1_UP0;
+extern uint8_t FLAG1_DOWN0;
+extern uint8_t FLAG1_UP1;
+extern uint8_t FLAG1_DOWN1;
 extern uint32_t high_time_pb0;
 extern uint32_t high_time_pb1;
 extern uint32_t high_time_set;
@@ -23,6 +27,9 @@ uint8_t positive_flow[6] = {0x0C, 0x13, 0x00, 0x00, 0x00, 0x00};
 uint8_t negative_flow[7] = {0x8C, 0x10, 0x13, 0x00, 0x00, 0x00, 0x00};
 uint8_t other_bytes[28]  = {0x0C, 0x3B, 0x00, 0x00, 0x00, 0x00, 0x0C, 0x26, 0x00, 0x00, 0x00, 0x00, 0x0B, 0x59, 0x00, 0x00, 0x00, 0x04, 0x6D, 0x00, 0x00, 0x00, 0x00, 0x02, 0xFD, 0x17, 0x00, 0x00};
 uint8_t total_bytes[62]  = {0};
+
+uint8_t positive_happened = 0;
+uint8_t negative_happened = 0;
 
 
 void Delay(__IO uint16_t nCount);
@@ -52,28 +59,63 @@ void main(void)
 
   while (1)
   {
-    if(FLAG_UP0 == 1 && FLAG_DOWN0 == 1)
+    if(FLAG0_UP0 == 1 && FLAG0_DOWN0 == 1 && high_time_pb0 > high_time_set && high_time_pb1 > high_time_set)      //正转
     {
-      if(high_time_pb1 > high_time_set)
+      positive_round++;
+      high_time_pb0 = 0;
+      high_time_pb1 = 0;
+
+      FLAG0_UP0 = 0;
+      FLAG0_DOWN0 = 0;     
+      FLAG1_UP0 = 0;
+      FLAG1_DOWN0 = 0; 
+      
+      positive_happened = 1;
+      negative_happened = 0;
+    }
+    else if(FLAG0_UP1 == 1 && FLAG0_DOWN1 == 1 && high_time_pb0 > high_time_set && high_time_pb1 > high_time_set) //反转                 
+    {
+      negative_round++;
+      high_time_pb0 = 0;
+      high_time_pb1 = 0;
+ 
+      FLAG0_UP1 = 0;
+      FLAG0_DOWN1 = 0; 
+      FLAG1_UP1 = 0;
+      FLAG1_DOWN1 = 0; 
+
+      positive_happened = 0;
+      negative_happened = 1;      
+    }
+    /*
+    else if(FLAG0_UP0 == 1 && FLAG0_DOWN1 == 1 && FLAG1_UP1 == 1 && FLAG1_DOWN0 == 1 && high_time_pb0 > high_time_set && high_time_pb1 > high_time_set) //正转小流信号
+    {
+      if(positive_happened == 1)
       {
         positive_round++;
-        high_time_pb1 = 0;
+        positive_happened = 0;
       }
-      FLAG_UP0 = 0;
-      FLAG_DOWN0 = 0;   
-      
+      high_time_pb0 = 0;
+      high_time_pb1 = 0;
+
+      FLAG0_UP0 = 0;
+      FLAG0_DOWN1 = 0; 
+      FLAG1_UP1 = 0;
+      FLAG1_DOWN0 = 0;
     }
-    else if(FLAG_UP1 == 1 && FLAG_DOWN1 == 1)
+   */
+    else if(FLAG0_UP0 == 1 && FLAG0_DOWN1 == 1 && FLAG1_UP0 == 1 && FLAG1_DOWN1 == 1 && high_time_pb0 > high_time_set && high_time_pb1 > high_time_set) //双门信号
     {
-      if(high_time_pb1 > high_time_set)
-      {
-        negative_round++;
-        high_time_pb1 = 0;
-      }   
-      FLAG_UP1 = 0;
-      FLAG_DOWN1 = 0; 
-      
+      high_time_pb0 = 0;
+      high_time_pb1 = 0;
+
+      FLAG0_UP0 = 0;
+      FLAG0_DOWN1 = 0; 
+      FLAG1_UP0 = 0;
+      FLAG1_DOWN1 = 0;
     }
+
+
     switch(received_cmd)
     {
       case NORMAL_READ_CMD:
@@ -165,13 +207,15 @@ static void GPIO_SYS_Init(void)
   GPIO_DeInit(GPIOD);
 
   GPIO_Init(GPIOB, GPIO_Pin_0, GPIO_Mode_In_FL_IT);
-  GPIO_Init(GPIOB, GPIO_Pin_1, GPIO_Mode_In_FL_No_IT);
+  GPIO_Init(GPIOB, GPIO_Pin_1, GPIO_Mode_In_FL_IT);
   
   GPIO_Init(GPIOD, GPIO_Pin_0, GPIO_Mode_Out_OD_Low_Slow);
   
   EXTI_DeInit();
   EXTI_SetPinSensitivity(EXTI_Pin_0, EXTI_Trigger_Rising_Falling);
-  
+  EXTI_SetPinSensitivity(EXTI_Pin_1, EXTI_Trigger_Rising_Falling);
+  EXTI_ClearITPendingBit(EXTI_IT_Pin0);
+  EXTI_ClearITPendingBit(EXTI_IT_Pin1);
 }
 
 static void TIMER2_SYS_Init(void)

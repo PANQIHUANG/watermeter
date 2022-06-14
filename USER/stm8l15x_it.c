@@ -157,12 +157,12 @@ INTERRUPT_HANDLER(EXTID_H_IRQHandler,7)
   * @param  None
   * @retval None
   */
-BitStatus PB0, PB1;
+
 uint8_t PB_DR           = 0xFF;
-uint8_t FLAG_UP0        = 0;
-uint8_t FLAG_DOWN0      = 0;
-uint8_t FLAG_UP1        = 0;
-uint8_t FLAG_DOWN1      = 0;
+uint8_t FLAG0_UP0        = 0;
+uint8_t FLAG0_DOWN0      = 0;
+uint8_t FLAG0_UP1        = 0;
+uint8_t FLAG0_DOWN1      = 0;
 
 INTERRUPT_HANDLER(EXTI0_IRQHandler,8)
 {
@@ -173,19 +173,19 @@ INTERRUPT_HANDLER(EXTI0_IRQHandler,8)
   
   if(PB_DR == 0x01)
   {
-    FLAG_UP0 = 1;
+    FLAG0_UP0 = 1;
   }
   else if(PB_DR == 0x02)
   {
-    FLAG_DOWN0 = 1;
+    FLAG0_DOWN0 = 1;
   }
   else if(PB_DR == 0x03)
   {
-    FLAG_UP1 = 1;
+    FLAG0_UP1 = 1;
   }
   else if(PB_DR == 0x00)
   {
-    FLAG_DOWN1 = 1;
+    FLAG0_DOWN1 = 1;
   }
  
   EXTI_ClearITPendingBit(EXTI_IT_Pin0);
@@ -196,11 +196,38 @@ INTERRUPT_HANDLER(EXTI0_IRQHandler,8)
   * @param  None
   * @retval None
   */
+
+uint8_t FLAG1_UP0        = 0;
+uint8_t FLAG1_DOWN0      = 0;
+uint8_t FLAG1_UP1        = 0;
+uint8_t FLAG1_DOWN1      = 0;
+
 INTERRUPT_HANDLER(EXTI1_IRQHandler,9)
 {
     /* In order to detect unexpected events during development,
        it is recommended to set a breakpoint on the following instruction.
     */
+  
+  PB_DR = GPIOB->IDR;
+  
+  if(PB_DR == 0x03)
+  {
+    FLAG1_UP0 = 1;
+  }
+  else if(PB_DR == 0x00)
+  {
+    FLAG1_DOWN0 = 1;
+  }
+  else if(PB_DR == 0x02)
+  {
+    FLAG1_UP1 = 1;
+  }
+  else if(PB_DR == 0x01)
+  {
+    FLAG1_DOWN1 = 1;
+  }
+ 
+  EXTI_ClearITPendingBit(EXTI_IT_Pin1);
 }
 
 /**

@@ -1,6 +1,5 @@
 ﻿D:\STM8L051_embeded\Test_Prj\Debug\Obj\Test_Project.pbd
 D:\STM8L051_embeded\Test_Prj\Debug\Obj\main.pbi
-D:\STM8L051_embeded\Test_Prj\Debug\Obj\stm8l15x_it.pbi
 D:\STM8L051_embeded\Test_Prj\Debug\Obj\stm8l15x_adc.pbi
 D:\STM8L051_embeded\Test_Prj\Debug\Obj\stm8l15x_aes.pbi
 D:\STM8L051_embeded\Test_Prj\Debug\Obj\stm8l15x_beep.pbi
@@ -13,6 +12,7 @@ D:\STM8L051_embeded\Test_Prj\Debug\Obj\stm8l15x_flash.pbi
 D:\STM8L051_embeded\Test_Prj\Debug\Obj\stm8l15x_gpio.pbi
 D:\STM8L051_embeded\Test_Prj\Debug\Obj\stm8l15x_i2c.pbi
 D:\STM8L051_embeded\Test_Prj\Debug\Obj\stm8l15x_irtim.pbi
+D:\STM8L051_embeded\Test_Prj\Debug\Obj\stm8l15x_it.pbi
 D:\STM8L051_embeded\Test_Prj\Debug\Obj\stm8l15x_itc.pbi
 D:\STM8L051_embeded\Test_Prj\Debug\Obj\stm8l15x_iwdg.pbi
 D:\STM8L051_embeded\Test_Prj\Debug\Obj\stm8l15x_lcd.pbi
