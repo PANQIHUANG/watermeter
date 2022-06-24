@@ -104,7 +104,7 @@ void main(void)
       FLAG1_DOWN0 = 0;
     }
    */
-    else if(FLAG0_UP0 == 1 && FLAG0_DOWN1 == 1 && FLAG1_UP0 == 1 && FLAG1_DOWN1 == 1 && high_time_pb0 > high_time_set && high_time_pb1 > high_time_set) //双门信号
+    else if(FLAG0_UP0 == 1 && FLAG0_DOWN1 == 1 && FLAG1_UP0 == 1 && FLAG1_DOWN1 == 1 && high_time_pb0 > high_time_pb1 > high_time_set) //双门信号
     {
       high_time_pb0 = 0;
       high_time_pb1 = 0;
@@ -134,6 +134,7 @@ void main(void)
         break;
         
       case CHANGE_BANDWIDTH_CMD:
+        usart_send_bytes((uint8_t *)(&high_time_set), 4); 
         
         received_cmd = 0;
         break;
@@ -286,7 +287,7 @@ void usart_send_bytes(uint8_t *data, int len)
 {
   for(int i = 0; i < len; i++)
   {
-    USART_SendData8(USART1, data[i]);
+    USART_SendData8(USART1, *(data + i));
     while(!USART_GetFlagStatus(USART1, USART_FLAG_TXE));
   }
 }
